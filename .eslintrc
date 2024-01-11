@@ -114,7 +114,7 @@
       {
         "autoFix": false,
         "cspell": {
-          "words": ["unstash"]
+          "words": ["encryptor", "unstash", "zeplo"]
         }
       }
     ],
@@ -134,6 +134,7 @@
     "fp/no-nil": "off",
     "fp/no-rest-parameters": "off",
     "fp/no-throw": "off",
+    "fp/no-unused-expression": "off",
     "import/extensions": ["error", "never"],
     "import/no-absolute-path": "error",
     "import/no-amd": "error",
