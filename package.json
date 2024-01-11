@@ -6,13 +6,8 @@
     "url": "https://github.com/sponsors/saiichihashimoto"
   },
   "license": "MIT",
-  "exports": {
-    "./next-pages": {
-      "import": "./dist/next-pages.mjs",
-      "require": "./dist/next-pages.js",
-      "types": "./dist/next-pages.d.ts"
-    }
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
