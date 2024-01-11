@@ -158,7 +158,12 @@
       {
         "missingExports": true,
         "unusedExports": true,
-        "ignoreExports": ["./*", "./src/next-pages.ts", "**/*.d.ts"]
+        "ignoreExports": [
+          "./*",
+          "./src/next-pages.ts",
+          "**/*.d.ts",
+          "**/*.test.ts"
+        ]
       }
     ],
     "import/no-useless-path-segments": "error",
@@ -364,6 +369,8 @@
       "rules": {
         "id-length": "off",
         "@typescript-eslint/promise-function-async": "off",
+        "fp/no-let": "off",
+        "fp/no-mutation": "off",
         "fp/no-unused-expression": "off",
         "import/no-extraneous-dependencies": [
           "error",
