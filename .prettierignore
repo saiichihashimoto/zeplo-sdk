@@ -2,6 +2,7 @@
 **/.sanity/**
 **/dist/**
 *lock.json
+.husky/**
 README.md
 next-env.d.ts
 tsup.config.bundled_*.mjs
