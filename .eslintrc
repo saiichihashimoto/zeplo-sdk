@@ -158,7 +158,7 @@
       {
         "missingExports": true,
         "unusedExports": true,
-        "ignoreExports": ["./*", "./src/index.ts", "**/*.d.ts"]
+        "ignoreExports": ["./*", "./src/next-pages.ts", "**/*.d.ts"]
       }
     ],
     "import/no-useless-path-segments": "error",

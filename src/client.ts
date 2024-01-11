@@ -1,7 +1,5 @@
 import type { IncomingHttpHeaders } from "http";
-import type { NextApiHandler } from "next";
 import Encryptor from "secure-e2ee";
-import superjson from "superjson";
 import { v4 } from "uuid";
 import { z } from "zod";
 
@@ -51,7 +49,7 @@ const {
   ZEPLO_TOKEN,
 } = process.env;
 
-const ZeploClient = <Payload>({
+export const ZeploClient = <Payload>({
   handler,
   route,
   options: {
@@ -62,6 +60,7 @@ const ZeploClient = <Payload>({
     mode = "production",
     retry: defaultRetry,
     schema = { parse: (data: unknown) => data as Payload },
+    serializer = JSON,
     token: zeploToken = ZEPLO_TOKEN,
     oldSecrets = !ZEPLO_OLD_SECRETS
       ? undefined
@@ -127,6 +126,15 @@ const ZeploClient = <Payload>({
       parse: (data: unknown) => Payload;
     };
     /**
+     * A serializer when queueing jobs.
+     *
+     * Great candidate for {@link https://github.com/blitz-js/superjson superjson}.
+     */
+    serializer?: {
+      parse: <T>(string: string) => T;
+      stringify: (object: any) => string;
+    };
+    /**
      * You will need to provide your API token with every request. You can obtain your API token from the console (once you’ve signed up).
      *
      * You should keep this token secret at all times, and refresh it if it becomes compromised.
@@ -167,7 +175,7 @@ const ZeploClient = <Payload>({
     ) => {
       const url = [apiUrl, baseUrl, route].filter(Boolean).join("/");
 
-      const stringifiedPayload = superjson.stringify(payload);
+      const stringifiedPayload = serializer.stringify(payload);
 
       const res = await fetch(
         `${url}?${new URLSearchParams({
@@ -231,7 +239,7 @@ const ZeploClient = <Payload>({
 
         await handler(
           schema.parse(
-            superjson.parse(await encryptor.decrypt(z.string().parse(body)))
+            serializer.parse(await encryptor.decrypt(z.string().parse(body)))
           ),
           {
             jobId,
@@ -255,34 +263,4 @@ const ZeploClient = <Payload>({
       }
     },
   };
-};
-
-export const Queue = <Payload>(
-  route: Parameters<typeof ZeploClient<Payload>>[0]["route"],
-  handler: Parameters<typeof ZeploClient<Payload>>[0]["handler"],
-  options?: Parameters<typeof ZeploClient<Payload>>[0]["options"]
-) => {
-  const zeplo = ZeploClient({ handler, route, options });
-
-  // eslint-disable-next-line fp/no-mutating-assign -- HACK
-  return Object.assign(
-    (async ({ body, headers }, res) => {
-      const { status, body: responseBody } = await zeplo.respondTo(
-        body,
-        headers
-      );
-
-      res.status(status);
-      res.send(
-        typeof responseBody === "string"
-          ? responseBody
-          : // HACK Since mode: "direct" executes the handler rather than enqueuing, we respond with the same response as zeplo
-            JSON.stringify(responseBody)
-      );
-    }) satisfies NextApiHandler<string>,
-    {
-      enqueue: async (...args: Parameters<typeof zeplo.enqueue>) =>
-        zeplo.enqueue(...args),
-    }
-  );
 };

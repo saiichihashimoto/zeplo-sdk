@@ -1,5 +1,7 @@
 {
-  "entry": ["src/index.ts", "src/internal.ts"],
+  "entry": ["src/next-pages.ts"],
+  "format": ["cjs", "esm"],
   "dts": true,
+  "clean": true,
   "skipNodeModulesBundle": true
 }
