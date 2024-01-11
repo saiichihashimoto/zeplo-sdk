@@ -6,8 +6,13 @@
     "url": "https://github.com/sponsors/saiichihashimoto"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    "./next-pages": {
+      "import": "./dist/next-pages.mjs",
+      "require": "./dist/next-pages.js",
+      "types": "./dist/next-pages.d.ts"
+    }
+  },
   "files": ["dist"],
   "scripts": {
     "build": "tsup",
@@ -18,12 +23,19 @@
     "prepare": "is-ci || husky install",
     "test": "jest --color --cache"
   },
+  "dependencies": {
+    "next": "14.0.4",
+    "secure-e2ee": "0.4.0",
+    "uuid": "3.4.0",
+    "zod": "3.22.4"
+  },
   "devDependencies": {
     "@cspell/eslint-plugin": "8.2.4",
     "@jest/globals": "29.7.0",
     "@standard-configs/prettier-plugin": "1.0.12",
     "@total-typescript/ts-reset": "0.5.1",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
+    "@types/uuid": "9.0.7",
     "@typescript-eslint/eslint-plugin": "6.13.1",
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
