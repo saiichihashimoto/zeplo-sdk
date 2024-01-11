@@ -3,10 +3,7 @@ import Encryptor from "secure-e2ee";
 import { v4 } from "uuid";
 import { z } from "zod";
 
-// TODO https://zeplo.io/docs/webhooks/
-
 type CommonOptions = {
-  // TODO Schedule https://zeplo.io/docs/schedule/
   /**
    * You can delay a request (or if scheduled the start of the schedule) by providing a number of seconds to delay by. For example, you may want to send an e-mail 50 minutes after a new user signs up, or delete an accounts data after 30 days.
    *
@@ -155,9 +152,6 @@ export const ZeploClient = <Payload>({
     : new Encryptor(encryptionSecret, oldSecrets);
 
   return {
-    // TODO bulk https://zeplo.io/docs/bulk/
-    // TODO step https://zeplo.io/docs/step/
-    // TODO API Endpoints https://zeplo.io/docs/api/
     enqueue: async (
       payload: Payload,
       {
