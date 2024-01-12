@@ -38,6 +38,12 @@ jobs:
           key: node-modules-${{ hashFiles('package-lock.json') }}
       - if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
+      - run: npm install --ignore-scripts
+      - run: |
+          if [[ $(git status --porcelain) != "" ]]; then
+            git --no-pager diff --color --text HEAD
+            exit 1
+          fi
 
       - run: npm run build
 
@@ -65,7 +71,12 @@ jobs:
           key: node-modules-${{ hashFiles('package-lock.json') }}
       - if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
-      - run: npm ls --package-lock-only
+      - run: npm install --ignore-scripts
+      - run: |
+          if [[ $(git status --porcelain) != "" ]]; then
+            git --no-pager diff --color --text HEAD
+            exit 1
+          fi
 
       - uses: actions/cache@v3
         with:
@@ -100,6 +111,11 @@ jobs:
           key: node-modules-${{ hashFiles('package-lock.json') }}
       - if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
-      - run: npm ls --package-lock-only
+      - run: npm install --ignore-scripts
+      - run: |
+          if [[ $(git status --porcelain) != "" ]]; then
+            git --no-pager diff --color --text HEAD
+            exit 1
+          fi
 
       - run: npm run stryker
