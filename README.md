@@ -10,7 +10,7 @@
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/saiichihashimoto?style=flat)](https://github.com/sponsors/saiichihashimoto)
 
-A typed SDK for [zeplo](https://zeplo.io) to avoid http calls with untyped args.
+A typed SDK for [zeplo.io](https://zeplo.io)
 
 ## Getting Started
 
