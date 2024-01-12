@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "zeplo-sdk",
   "version": "0.0.0-development",
   "description": "A typed SDK for zeplo.io",
