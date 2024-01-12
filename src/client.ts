@@ -37,32 +37,23 @@ type CommonOptions = {
       };
 };
 
-const {
-  NODE_ENV,
-  ZEPLO_API_URL,
-  ZEPLO_BASE_URL,
-  ZEPLO_ENCRYPTION_SECRET,
-  ZEPLO_OLD_SECRETS,
-  ZEPLO_TOKEN,
-} = process.env;
-
 export const ZeploClient = <Payload>({
   handler,
   route,
   options: {
-    baseUrl = ZEPLO_BASE_URL,
+    baseUrl = process.env.ZEPLO_BASE_URL,
     delay: defaultDelay,
-    encryptionSecret = ZEPLO_ENCRYPTION_SECRET,
-    env = NODE_ENV,
+    encryptionSecret = process.env.ZEPLO_ENCRYPTION_SECRET,
+    env = process.env.NODE_ENV,
     mode = "production",
     retry: defaultRetry,
     schema = { parse: (data: unknown) => data as Payload },
     serializer = JSON,
-    token: zeploToken = ZEPLO_TOKEN,
-    oldSecrets = !ZEPLO_OLD_SECRETS
+    token: zeploToken = process.env.ZEPLO_TOKEN,
+    oldSecrets = !process.env.ZEPLO_OLD_SECRETS
       ? undefined
-      : z.array(z.string()).parse(JSON.parse(ZEPLO_OLD_SECRETS)),
-    apiUrl = ZEPLO_API_URL ??
+      : z.array(z.string()).parse(JSON.parse(process.env.ZEPLO_OLD_SECRETS)),
+    apiUrl = process.env.ZEPLO_API_URL ??
       (mode === "direct"
         ? ""
         : mode === "dev-server"
@@ -167,7 +158,7 @@ export const ZeploClient = <Payload>({
         trace?: string;
       } = {}
     ) => {
-      const url = [apiUrl, baseUrl, route].filter(Boolean).join("/");
+      const url = `${[apiUrl, baseUrl].filter(Boolean).join("/")}/${route}`;
 
       const stringifiedPayload = serializer.stringify(payload);
 
