@@ -1,6 +1,7 @@
 {
   "name": "zeplo-sdk",
   "version": "0.0.0-development",
+  "description": "A typed SDK for zeplo to avoid http calls with untyped args",
   "funding": {
     "type": "individual",
     "url": "https://github.com/sponsors/saiichihashimoto"

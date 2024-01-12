@@ -105,7 +105,7 @@ export const ZeploClient = <Payload>({
     /**
      * - `production`: Calling `zeplo.to` as expected.
      * - `direct`: The easiest way to run Zeplo in your development environment is to simply remove the zeplo.to/ prefix based on an environment variable. This approach has the advantage that in development, errors are thrown directly which can lead to easier debugging 🙌.
-     * - `dev-server`: A local dev server that can be used during development. It implements the {@link https://zeplo.io/docs same API} as the zeplo.to.
+     * - `dev-server`: Calls `localhost:4747` for use with {@link https://zeplo.io/docs/cli `zeplo dev`}, a local dev server that can be used during development. It implements the {@link https://zeplo.io/docs same API} as the zeplo.to.
      */
     mode?: "dev-server" | "direct" | "production";
     /**

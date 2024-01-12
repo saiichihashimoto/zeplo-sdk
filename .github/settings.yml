@@ -2,6 +2,7 @@
 _extends: .github
 repository:
   name: zeplo-sdk
+  description: A typed SDK for zeplo to avoid http calls with untyped args
   private: false
 branches:
   - name: main
