@@ -73,6 +73,8 @@ describe("queue", () => {
 
         return fetchResponse;
       });
+
+    jest.spyOn(console, "error").mockReturnValue(undefined);
   });
 
   afterEach(() => {
@@ -145,8 +147,6 @@ describe("queue", () => {
   it("returns a 500 on handler error", async () => {
     queue = Queue("route", handler);
 
-    jest.spyOn(console, "error").mockReturnValue(undefined);
-
     handler.mockRejectedValue(new Error("Mock Error"));
 
     await queue.enqueue({ foo: "bar" });
@@ -169,7 +169,7 @@ describe("queue", () => {
     await later;
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.anything(),
       expect.objectContaining({
         headers: expect.objectContaining({ "X-Zeplo-Token": "foo" }),
       })
@@ -186,7 +186,7 @@ describe("queue", () => {
     await later;
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.anything(),
       expect.objectContaining({
         headers: expect.objectContaining({ "X-Zeplo-Token": "bar" }),
       })
@@ -495,5 +495,93 @@ describe("queue", () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith('{"id":"foo-iow"}');
+  });
+
+  it("encrypts body with encryptionSecret", async () => {
+    queue = Queue("route", handler, {
+      encryptionSecret: "6dea028d912dccf28d5e546141e1c048",
+    });
+
+    await queue.enqueue({ foo: "bar" });
+
+    jest.runAllTicks();
+    await later;
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        body: expect.not.stringMatching('{"foo":"bar"}'),
+      })
+    );
+
+    expect(handler).toHaveBeenCalledWith(
+      { foo: "bar" },
+      { jobId: "foo", start: new Date("1970-01-01T00:32:50.000Z") }
+    );
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.send).toHaveBeenCalledWith('{"id":"foo"}');
+  });
+
+  it("uses serializer", async () => {
+    queue = Queue("route", handler, {
+      serializer: {
+        stringify: (object) => JSON.stringify(object).toUpperCase(),
+        parse: <T>(string: string) => JSON.parse(string.toLowerCase()) as T,
+      },
+    });
+
+    await queue.enqueue({ foo: "bar" });
+
+    jest.runAllTicks();
+    await later;
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        body: '{"FOO":"BAR"}',
+      })
+    );
+
+    expect(handler).toHaveBeenCalledWith(
+      { foo: "bar" },
+      { jobId: "foo", start: new Date("1970-01-01T00:32:50.000Z") }
+    );
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.send).toHaveBeenCalledWith('{"id":"foo"}');
+  });
+
+  it("uses schema", async () => {
+    queue = Queue("route", handler, {
+      schema: {
+        parse: (data: unknown) => {
+          if (!data || typeof data !== "object" || !("bar" in data)) {
+            throw new Error("Mock Error");
+          }
+
+          return data;
+        },
+      },
+    });
+
+    await queue.enqueue({ foo: "bar" });
+
+    jest.runAllTicks();
+    await later;
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        body: '{"foo":"bar"}',
+      })
+    );
+
+    expect(handler).not.toHaveBeenCalled();
+
+    // eslint-disable-next-line no-console -- Catching console.error
+    expect(console.error).toHaveBeenCalledWith(new Error("Mock Error"));
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Error: Mock Error");
   });
 });

@@ -226,6 +226,7 @@
     "unicorn/prefer-node-protocol": "off",
     "unicorn/prefer-string-replace-all": "error",
     "unicorn/prefer-top-level-await": "off",
+    "unicorn/prefer-type-error": "off",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/require-array-join-separator": "off"
   },
