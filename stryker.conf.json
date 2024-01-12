@@ -2,11 +2,11 @@
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "allowEmpty": true,
   "reporters": ["clear-text", "progress"],
+  "checkers": ["typescript"],
   "testRunner": "jest",
-  "mutate": ["src/**/*.ts", "!src/**/*test.ts"],
   "thresholds": {
-    "high": 80,
-    "low": 60,
-    "break": 51.88
+    "high": 95,
+    "low": 90,
+    "break": 85
   }
 }

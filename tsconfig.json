@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "allowUnreachableCode": false,
+    "skipLibCheck": true,
     "noErrorTruncation": true
   },
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "@types/**/*.d.ts"],

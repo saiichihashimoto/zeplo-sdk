@@ -226,6 +226,7 @@
     "unicorn/prefer-node-protocol": "off",
     "unicorn/prefer-string-replace-all": "error",
     "unicorn/prefer-top-level-await": "off",
+    "unicorn/prefer-type-error": "off",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/require-array-join-separator": "off"
   },
@@ -368,6 +369,7 @@
       },
       "rules": {
         "id-length": "off",
+        "@typescript-eslint/consistent-type-imports": "off",
         "@typescript-eslint/promise-function-async": "off",
         "fp/no-let": "off",
         "fp/no-mutation": "off",
