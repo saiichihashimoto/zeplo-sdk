@@ -1,6 +1,7 @@
 # zeplo-sdk
 
 [![NPM Downloads](https://img.shields.io/npm/dw/zeplo-sdk?style=flat&logo=npm)](https://www.npmjs.com/package/zeplo-sdk)
+[![Mutation testing badge](https://img.shields.io/endpoint?logo=stryker&style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fsaiichihashimoto%2Fzeplo-sdk%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/saiichihashimoto/zeplo-sdk/main)
 [![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/saiichihashimoto/zeplo-sdk?style=flat&logo=github)](https://github.com/saiichihashimoto/zeplo-sdk/pulls?q=is%3Apr+is%3Aclosed)
 [![GitHub Repo stars](https://img.shields.io/github/stars/saiichihashimoto/zeplo-sdk?style=flat&logo=github)](https://github.com/saiichihashimoto/zeplo-sdk/stargazers)
 [![GitHub contributors](https://img.shields.io/github/contributors/saiichihashimoto/zeplo-sdk?style=flat&logo=github)](https://github.com/saiichihashimoto/zeplo-sdk/graphs/contributors)
