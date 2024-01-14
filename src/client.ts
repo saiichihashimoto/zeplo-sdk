@@ -120,7 +120,7 @@ export const ZeploClient = <Payload>({
      */
     serializer?: {
       parse: <T>(string: string) => T;
-      stringify: (object: any) => string;
+      stringify: (object: unknown) => string;
     };
     /**
      * You will need to provide your API token with every request. You can obtain your API token from the console (once you’ve signed up).
@@ -249,3 +249,15 @@ export const ZeploClient = <Payload>({
     },
   };
 };
+
+export type ClientOptions<Payload> = NonNullable<
+  Parameters<typeof ZeploClient<Payload>>[0]["options"]
+>;
+
+export type ClientHandler<Payload> = Parameters<
+  typeof ZeploClient<Payload>
+>[0]["handler"];
+
+export type EnqueueOptions<Payload> = NonNullable<
+  Parameters<ReturnType<typeof ZeploClient<Payload>>["enqueue"]>[1]
+>;

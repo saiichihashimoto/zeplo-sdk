@@ -1,11 +1,12 @@
 import type { NextApiHandler } from "next";
 
 import { ZeploClient } from "./client";
+import type { ClientHandler, ClientOptions, EnqueueOptions } from "./client";
 
 export const Queue = <Payload>(
-  route: Parameters<typeof ZeploClient<Payload>>[0]["route"],
-  handler: Parameters<typeof ZeploClient<Payload>>[0]["handler"],
-  options?: Parameters<typeof ZeploClient<Payload>>[0]["options"]
+  route: string,
+  handler: ClientHandler<Payload>,
+  options?: ClientOptions<Payload>
 ) => {
   const zeplo = ZeploClient({ handler, route, options });
 
@@ -26,8 +27,8 @@ export const Queue = <Payload>(
       );
     }) satisfies NextApiHandler<string>,
     {
-      enqueue: async (...args: Parameters<typeof zeplo.enqueue>) =>
-        zeplo.enqueue(...args),
+      enqueue: async (payload: Payload, options?: EnqueueOptions<Payload>) =>
+        zeplo.enqueue(payload, options),
     }
   );
 };
