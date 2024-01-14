@@ -8,13 +8,14 @@
     "url": "https://github.com/sponsors/saiichihashimoto"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/client.js",
+  "types": "dist/client.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsup",
+    "prebuild": "rm -rf dist",
+    "build": "npx tsc --build --verbose",
     "dev": "concurrently --prefix-colors \"auto\" npm:dev:*",
-    "dev:build": "npm run build -- --watch",
+    "dev:build": "tsc-watch --preserveWatchOutput",
     "dev:test": "npm run test -- --watch",
     "lint": "lint-staged --shell --verbose --diff \"4b825dc642cb6eb9a060e54bf8d69288fbee4904\" --no-stash",
     "prepare": "is-ci || husky install",
@@ -67,7 +68,7 @@
     "prettier-plugin-sh": "0.12.8",
     "semantic-release": "22.0.8",
     "ts-jest": "29.1.1",
-    "tsup": "8.0.1",
+    "tsc-watch": "6.0.4",
     "typescript": "5.3.2"
   },
   "engines": {

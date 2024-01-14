@@ -1,6 +1,0 @@
-{
-  "entry": ["src/next-pages.ts"],
-  "dts": true,
-  "clean": true,
-  "skipNodeModulesBundle": true
-}
