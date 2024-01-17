@@ -17,12 +17,14 @@ A typed SDK for [zeplo.io](https://zeplo.io)
 
 ### Next.js (Pages Router)
 
-Create a new [API Route](https://nextjs.org/docs/api-routes/introduction) and paste the following:
+Depending on whether you're using [API Routes](https://nextjs.org/docs/api-routes/introduction) or [Router Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers), paste the following:
+
+Pages Router:
 
 `pages/api/queues/email.ts`:
 
 ```typescript
-import { Queue } from "zeplo-sdk/dist/next-pages"
+import { Queue } from "zeplo-sdk/dist/next-pages";
 
 export default Queue(
   "api/queues/email", // 👈 the route it's reachable on
@@ -33,7 +35,28 @@ export default Queue(
     baseUrl: "your-website.com",
     token: "your-zeplo-token"
   }
-)
+);
+```
+
+App Router:
+
+`app/api/queues/email/route.ts`:
+
+```typescript
+import { Queue } from "zeplo-sdk/dist/next-app";
+
+export const EmailQueue = Queue(
+  "api/queues/email", // 👈 the route it's reachable on
+  async job => {
+    await email.send( ... )
+  },
+  {
+    baseUrl: "your-website.com",
+    token: "your-zeplo-token"
+  }
+);
+
+export const POST = EmailQueue;
 ```
 
 Up top, we're importing `Queue`, which is a function that we use to declare a new Queue and export it as default.
@@ -42,12 +65,15 @@ Up top, we're importing `Queue`, which is a function that we use to declare a ne
 
 - The first one is the location of the API Route it's been declared in. This is required for the Zeplo server to know where jobs need to be sent upon execution.
 - The second one is a worker function that actually executes the job. In this example, it sends an email.
-- The third one is a worker function that actually executes the job. In this example, it sends an email.
+- The third one is a set of options, including all common options from the [zeplo documentation](https://zeplo.io/docs/queue/).
 
 Now that we declared the Queue, using it is straight forward. Simply import it and enqueue a new job:
 
 ```typescript
-import EmailQueue from "pages/api/queues/email"
+// Pages Router
+import EmailQueue from "pages/api/queues/email";
+// App Router
+import { EmailQueue } from "app/api/queues/email"
 
 // could be some API route / getServerSideProps / ...
 export default async (req, res) => {
@@ -57,7 +83,7 @@ export default async (req, res) => {
     { delay: 10000 } // scheduling options
   )
 
-}
+};
 ```
 
 Calling `.enqueue` will trigger a call to the Quirrel server to enqueue a new job. After 10 seconds, when the job is due, the Queue's worker function will receive the job payload and execute it.
@@ -71,7 +97,7 @@ All common options from the [zeplo documentation](https://zeplo.io/docs/queue/) 
 There are three ways that Zeplo can be used:
 
 - `production`: Calling `zeplo.to` as expected. Default value.
-- `direct`: The easiest way to run Zeplo in your development environment is to simply remove the zeplo.to/ prefix based on an environment variable. This approach has the advantage that in development, errors are thrown directly which can lead to easier debugging 🙌.
+- `direct`: The easiest way to run Zeplo in your development environment is to simply remove the zeplo.to/ prefix based on an environment variable. This approach has the advantage that in development, errors are thrown directly which can lead to easier debugging 🙌. The downside is that it becomes a blocking promise and won't resolve until the endpoint is finished.
 - `dev-server`: Calls `localhost:4747` for use with [`zeplo dev`](https://zeplo.io/docs/cli), a local dev server that can be used during development. It implements the [same API](https://zeplo.io/docs) as zeplo.to.
 
 ### `encryptionSecret` / `oldSecrets`
