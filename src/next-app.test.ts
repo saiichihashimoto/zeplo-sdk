@@ -7,9 +7,9 @@ import {
   jest,
 } from "@jest/globals";
 import type { Mock, SpiedFunction } from "jest-mock";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-import { Queue } from "./next-pages";
+import { Queue } from "./next-app";
 
 jest.mock<typeof import("uuid")>(
   "uuid",
@@ -19,17 +19,14 @@ jest.mock<typeof import("uuid")>(
     } as typeof import("uuid"))
 );
 
-describe("next-pages", () => {
+describe("next-app", () => {
   const oldEnv = process.env;
   let fetchResponse: Response;
+  let queueResponse: NextResponse | undefined;
   let fetchSpy: SpiedFunction<typeof global.fetch>;
   let handler: Mock<() => Promise<void>>;
   let later: Promise<void>;
   let queue: ReturnType<typeof Queue<any>>;
-  let res: NextApiResponse<string> & {
-    send: Mock<NextApiResponse<string>["send"]>;
-    status: Mock<NextApiResponse<string>["status"]>;
-  };
 
   beforeEach(() => {
     process.env = { ...oldEnv };
@@ -44,10 +41,7 @@ describe("next-pages", () => {
       text: async () => "res.text",
     } as typeof fetchResponse;
 
-    res = {
-      send: jest.fn(() => {}) as NextApiResponse["send"],
-      status: jest.fn(() => res) as NextApiResponse["status"],
-    } as typeof res;
+    queueResponse = undefined;
 
     fetchSpy = jest
       .spyOn(global, "fetch")
@@ -58,16 +52,13 @@ describe("next-pages", () => {
               process.nextTick(resolve);
             });
 
-            await queue(
-              {
-                body,
-                headers: {
-                  "x-zeplo-id": "foo",
-                  "x-zeplo-start": "1970-01-01T00:32:50.000Z",
-                } as NextApiRequest["headers"],
-              } as NextApiRequest,
-              res
-            );
+            queueResponse = await queue({
+              text: async () => body,
+              headers: new Headers({
+                "x-zeplo-id": "foo",
+                "x-zeplo-start": "1970-01-01T00:32:50.000Z",
+              }),
+            } as NextRequest);
           })();
         }
 
@@ -97,8 +88,7 @@ describe("next-pages", () => {
     );
 
     expect(handler).not.toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.send).not.toHaveBeenCalled();
+    expect(queueResponse).toBeUndefined();
 
     jest.runAllTicks();
     await later;
@@ -108,8 +98,8 @@ describe("next-pages", () => {
       { jobId: "foo", start: new Date("1970-01-01T00:32:50.000Z") }
     );
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith('{"id":"foo"}');
+    expect(queueResponse).toHaveProperty("status", 200);
+    await expect(queueResponse?.text()).resolves.toBe('{"id":"foo"}');
   });
 
   it("rethrows enqueue error", async () => {
@@ -123,8 +113,7 @@ describe("next-pages", () => {
     await later;
 
     expect(handler).not.toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.send).not.toHaveBeenCalled();
+    expect(queueResponse).toBeUndefined();
   });
 
   it("throws error when zeplo 400s", async () => {
@@ -140,8 +129,7 @@ describe("next-pages", () => {
     await later;
 
     expect(handler).not.toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.send).not.toHaveBeenCalled();
+    expect(queueResponse).toBeUndefined();
   });
 
   it("returns a 500 on handler error", async () => {
@@ -156,8 +144,8 @@ describe("next-pages", () => {
 
     // eslint-disable-next-line no-console -- Catching console.error
     expect(console.error).toHaveBeenCalledWith(new Error("Mock Error"));
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith("Error: Mock Error");
+    expect(queueResponse).toHaveProperty("status", 500);
+    await expect(queueResponse?.text()).resolves.toBe("Error: Mock Error");
   });
 
   it("includes token in fetch", async () => {
@@ -444,31 +432,20 @@ describe("next-pages", () => {
   });
 
   it("calls queue inline instead of waiting with mode=direct", async () => {
-    res.send.mockImplementation((body) => {
-      fetchResponse = {
-        ...fetchResponse,
-        json: async () => JSON.parse(body),
-        text: async () => body,
-      };
-    });
-
-    res.status.mockImplementation((status) => {
-      fetchResponse = { ...fetchResponse, status };
-
-      return res;
-    });
-
     fetchSpy.mockImplementation(async (input, { body, headers = {} } = {}) => {
-      await queue(
-        {
-          body,
-          headers: {
-            "x-zeplo-id": headers["X-Zeplo-Id" as keyof HeadersInit],
-            "x-zeplo-start": headers["X-Zeplo-Start" as keyof HeadersInit],
-          } as NextApiRequest["headers"],
-        } as NextApiRequest,
-        res
-      );
+      queueResponse = await queue({
+        text: async () => body,
+        headers: new Headers({
+          ...(!("X-Zeplo-Id" in headers)
+            ? {}
+            : { "x-zeplo-id": headers["X-Zeplo-Id"] }),
+          ...(!("X-Zeplo-Start" in headers)
+            ? {}
+            : { "x-zeplo-start": headers["X-Zeplo-Start"] }),
+        }),
+      } as NextRequest);
+
+      fetchResponse = queueResponse.clone();
 
       return fetchResponse;
     });
@@ -493,8 +470,8 @@ describe("next-pages", () => {
       { jobId: "foo-iow", start: new Date("2023-10-05T06:14:01.293Z") }
     );
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith('{"id":"foo-iow"}');
+    expect(queueResponse).toHaveProperty("status", 200);
+    await expect(queueResponse?.text()).resolves.toBe('{"id":"foo-iow"}');
   });
 
   it("encrypts body with encryptionSecret", async () => {
@@ -519,8 +496,8 @@ describe("next-pages", () => {
       { jobId: "foo", start: new Date("1970-01-01T00:32:50.000Z") }
     );
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith('{"id":"foo"}');
+    expect(queueResponse).toHaveProperty("status", 200);
+    await expect(queueResponse?.text()).resolves.toBe('{"id":"foo"}');
   });
 
   it("uses serializer", async () => {
@@ -548,8 +525,8 @@ describe("next-pages", () => {
       { jobId: "foo", start: new Date("1970-01-01T00:32:50.000Z") }
     );
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith('{"id":"foo"}');
+    expect(queueResponse).toHaveProperty("status", 200);
+    await expect(queueResponse?.text()).resolves.toBe('{"id":"foo"}');
   });
 
   it("uses schema", async () => {
@@ -581,7 +558,7 @@ describe("next-pages", () => {
 
     // eslint-disable-next-line no-console -- Catching console.error
     expect(console.error).toHaveBeenCalledWith(new Error("Mock Error"));
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith("Error: Mock Error");
+    expect(queueResponse).toHaveProperty("status", 500);
+    await expect(queueResponse?.text()).resolves.toBe("Error: Mock Error");
   });
 });
