@@ -24,7 +24,7 @@
     "test": "jest --color --cache"
   },
   "dependencies": {
-    "next": "14.0.4",
+    "next": "14.1.0",
     "secure-e2ee": "0.4.0",
     "uuid": "9.0.1",
     "zod": "3.22.4"
