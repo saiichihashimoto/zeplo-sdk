@@ -190,6 +190,7 @@ export const ZeploClient = <Payload>({
               }),
         })}`,
         {
+          cache: "no-store",
           method: "POST",
           credentials: "omit",
           body: await encryptor.encrypt(stringifiedPayload),
