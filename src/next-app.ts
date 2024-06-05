@@ -13,10 +13,10 @@ export const Queue = <Payload>(
 
   // eslint-disable-next-line fp/no-mutating-assign -- HACK
   return Object.assign(
-    (async ({ text, headers }) => {
+    (async (req) => {
       const { status, body } = await zeplo.respondTo(
-        await text(),
-        Object.fromEntries(headers.entries())
+        await req.text(),
+        Object.fromEntries(req.headers.entries())
       );
 
       return new NextResponse(
