@@ -56,7 +56,7 @@ export const EmailQueue = Queue(
   }
 );
 
-export const POST = EmailQueue;
+export const POST = EmailQueue.handler;
 ```
 
 Up top, we're importing `Queue`, which is a function that we use to declare a new Queue and export it as default.
