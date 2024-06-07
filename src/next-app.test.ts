@@ -52,7 +52,7 @@ describe("next-app", () => {
               process.nextTick(resolve);
             });
 
-            queueResponse = await queue.handler({
+            queueResponse = await queue({
               text: async () => body,
               headers: new Headers({
                 "x-zeplo-id": "foo",
@@ -433,7 +433,7 @@ describe("next-app", () => {
 
   it("calls queue inline instead of waiting with mode=direct", async () => {
     fetchSpy.mockImplementation(async (input, { body, headers = {} } = {}) => {
-      queueResponse = await queue.handler({
+      queueResponse = await queue({
         text: async () => body,
         headers: new Headers({
           ...(!("X-Zeplo-Id" in headers)
