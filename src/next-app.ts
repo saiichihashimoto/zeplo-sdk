@@ -11,10 +11,9 @@ export const Queue = <Payload>(
 ) => {
   const zeplo = ZeploClient({ handler, route, options });
 
-  return {
-    enqueue: async (payload: Payload, options?: EnqueueOptions<Payload>) =>
-      zeplo.enqueue(payload, options),
-    handler: (async (req) => {
+  // eslint-disable-next-line fp/no-mutating-assign -- HACK
+  return Object.assign(
+    (async (req) => {
       const { status, body } = await zeplo.respondTo(
         await req.text(),
         Object.fromEntries(req.headers.entries())
@@ -28,5 +27,9 @@ export const Queue = <Payload>(
         { status }
       );
     }) satisfies (req: NextRequest) => Promise<NextResponse<string>>,
-  };
+    {
+      enqueue: async (payload: Payload, options?: EnqueueOptions<Payload>) =>
+        zeplo.enqueue(payload, options),
+    }
+  );
 };
