@@ -26,7 +26,7 @@
   "dependencies": {
     "next": "14.2.3",
     "secure-e2ee": "0.4.0",
-    "uuid": "9.0.1",
+    "uuid": "10.0.0",
     "zod": "3.22.4"
   },
   "devDependencies": {
@@ -39,7 +39,7 @@
     "@total-typescript/ts-reset": "0.5.1",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
     "@types/lint-staged": "13.3.0",
-    "@types/uuid": "9.0.8",
+    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
