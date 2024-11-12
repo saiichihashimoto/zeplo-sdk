@@ -26,7 +26,7 @@
   "dependencies": {
     "next": "14.2.5",
     "secure-e2ee": "0.4.0",
-    "uuid": "10.0.0",
+    "uuid": "11.0.3",
     "zod": "3.23.8"
   },
   "devDependencies": {
