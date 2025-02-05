@@ -18,7 +18,7 @@
     "dev:build": "tsc-watch --preserveWatchOutput",
     "dev:test": "npm run test -- --watch",
     "lint": "lint-staged --shell --verbose --diff \"4b825dc642cb6eb9a060e54bf8d69288fbee4904\" --no-stash",
-    "prepare": "is-ci || husky install",
+    "prepare": "is-ci || husky",
     "stryker": "stryker run",
     "pretest": "rm -rf .stryker-tmp",
     "test": "jest --color --cache"
@@ -72,6 +72,6 @@
     "typescript": "5.3.3"
   },
   "engines": {
-    "node": "^18.15.0"
+    "node": "^20.16.0"
   }
 }
