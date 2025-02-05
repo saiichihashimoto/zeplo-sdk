@@ -24,7 +24,6 @@
     "test": "jest --color --cache"
   },
   "dependencies": {
-    "next": "15.0.3",
     "secure-e2ee": "0.4.0",
     "uuid": "11.0.3",
     "zod": "3.23.8"
@@ -64,12 +63,16 @@
     "is-ci": "3.0.1",
     "jest": "29.7.0",
     "lint-staged": "15.2.10",
+    "next": "15.0.3",
     "prettier": "2.8.8",
     "prettier-plugin-sh": "0.12.8",
     "semantic-release": "22.0.8",
     "ts-jest": "29.2.5",
     "tsc-watch": "6.2.1",
     "typescript": "5.3.3"
+  },
+  "peerDependencies": {
+    "next": "^14.2.7 || ^15.0.3"
   },
   "engines": {
     "node": "^20.16.0"
