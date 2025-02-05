@@ -561,4 +561,20 @@ describe("next-app", () => {
     expect(queueResponse).toHaveProperty("status", 500);
     await expect(queueResponse?.text()).resolves.toBe("Error: Mock Error");
   });
+
+  it("uses headers", async () => {
+    queue = Queue("route", handler, { headers: { hello: "world" } });
+
+    await queue.enqueue({ foo: "bar" });
+
+    jest.runAllTicks();
+    await later;
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        headers: expect.objectContaining({ hello: "world" }),
+      })
+    );
+  });
 });

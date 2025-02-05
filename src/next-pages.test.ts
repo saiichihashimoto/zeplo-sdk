@@ -584,4 +584,21 @@ describe("next-pages", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith("Error: Mock Error");
   });
+
+  it("uses headers", async () => {
+    process.env.ZEPLO_TOKEN = "bar";
+    queue = Queue("route", handler, { headers: { hello: "world" } });
+
+    await queue.enqueue({ foo: "bar" });
+
+    jest.runAllTicks();
+    await later;
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        headers: expect.objectContaining({ hello: "world" }),
+      })
+    );
+  });
 });

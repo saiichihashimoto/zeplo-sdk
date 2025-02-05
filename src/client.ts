@@ -45,6 +45,7 @@ export const ZeploClient = <Payload>({
     delay: defaultDelay,
     encryptionSecret = process.env.ZEPLO_ENCRYPTION_SECRET,
     env = process.env.NODE_ENV,
+    headers = {},
     mode = "production",
     retry: defaultRetry,
     schema = { parse: (data: unknown) => data as Payload },
@@ -93,6 +94,7 @@ export const ZeploClient = <Payload>({
      * https://zeplo.io/docs/environments/
      */
     env?: string;
+    headers?: { [header: string]: string };
     /**
      * - `production`: Calling `zeplo.to` as expected.
      * - `direct`: The easiest way to run Zeplo in your development environment is to simply remove the zeplo.to/ prefix based on an environment variable. This approach has the advantage that in development, errors are thrown directly which can lead to easier debugging 🙌.
@@ -195,6 +197,7 @@ export const ZeploClient = <Payload>({
           credentials: "omit",
           body: await encryptor.encrypt(stringifiedPayload),
           headers: {
+            ...headers,
             ...(mode !== "direct"
               ? { ...(!zeploToken ? {} : { "X-Zeplo-Token": zeploToken }) }
               : {
