@@ -29,7 +29,7 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@cspell/eslint-plugin": "8.16.0",
+    "@cspell/eslint-plugin": "8.17.5",
     "@jest/globals": "29.7.0",
     "@standard-configs/prettier-plugin": "1.0.12",
     "@stryker-mutator/core": "8.0.0",
