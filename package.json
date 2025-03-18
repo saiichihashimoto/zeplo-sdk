@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "secure-e2ee": "0.4.0",
-    "uuid": "11.0.3",
+    "uuid": "11.1.0",
     "zod": "3.23.8"
   },
   "devDependencies": {
