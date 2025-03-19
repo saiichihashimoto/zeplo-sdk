@@ -26,7 +26,7 @@
   "dependencies": {
     "secure-e2ee": "0.4.0",
     "uuid": "11.1.0",
-    "zod": "3.23.8"
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "8.17.5",
