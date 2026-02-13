@@ -3,6 +3,10 @@
   "name": "zeplo-sdk",
   "version": "0.0.0-development",
   "description": "A typed SDK for zeplo.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saiichihashimoto/zeplo-sdk.git"
+  },
   "funding": {
     "type": "individual",
     "url": "https://github.com/sponsors/saiichihashimoto"
@@ -66,7 +70,7 @@
     "next": "15.2.3",
     "prettier": "2.8.8",
     "prettier-plugin-sh": "0.12.8",
-    "semantic-release": "24.2.3",
+    "semantic-release": "25.0.0",
     "ts-jest": "29.2.5",
     "tsc-watch": "6.2.1",
     "typescript": "5.3.3"
@@ -75,6 +79,6 @@
     "next": "^14.2.7 || ^15.0.3"
   },
   "engines": {
-    "node": "^20.16.0"
+    "node": "^22.14.0"
   }
 }
