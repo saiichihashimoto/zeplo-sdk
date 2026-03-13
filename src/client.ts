@@ -44,7 +44,7 @@ export const ZeploClient = <Payload>({
     baseUrl = process.env.ZEPLO_BASE_URL,
     delay: defaultDelay,
     encryptionSecret = process.env.ZEPLO_ENCRYPTION_SECRET,
-    env = process.env.NODE_ENV,
+    env = process.env.NODE_ENV!,
     headers = {},
     mode = "production",
     retry: defaultRetry,
@@ -218,12 +218,35 @@ export const ZeploClient = <Payload>({
     },
     respondTo: async (body: unknown, headers: IncomingHttpHeaders) => {
       try {
-        const { "x-zeplo-id": jobId, "x-zeplo-start": start } = z
-          .object({
-            // https://zeplo.io/docs/queue/
-            "x-zeplo-id": z.string(),
-            "x-zeplo-start": z.string(),
-          })
+        const { jobId, start } = z
+          .union([
+            z
+              .object({
+                "x-zeplo-id": z.string(),
+                "x-zeplo-start": z
+                  .string()
+                  .transform(
+                    (start) => new Date(Number.parseFloat(start) * 1000)
+                  ),
+              })
+              .transform(({ "x-zeplo-id": jobId, "x-zeplo-start": start }) => ({
+                jobId,
+                start,
+              })),
+            z
+              .object({
+                "x-request-id": z.string(),
+                "x-request-start": z
+                  .string()
+                  .transform((start) => new Date(Number(start))),
+              })
+              .transform(
+                ({ "x-request-id": jobId, "x-request-start": start }) => ({
+                  jobId,
+                  start,
+                })
+              ),
+          ])
           .parse(headers);
 
         await handler(
@@ -232,7 +255,7 @@ export const ZeploClient = <Payload>({
           ),
           {
             jobId,
-            start: new Date(Number.parseFloat(start) * 1000),
+            start,
           }
         );
 
